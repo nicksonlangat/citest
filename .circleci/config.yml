@@ -1,0 +1,30 @@
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.18.2
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache: # special step to restore the dependency cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-dependencies
+          command: npm install
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - add_ssh_keys:
+          fingerprints:
+            - "${erpv2_staging_fingerprint}"
+      - deploy:
+          command:  |
+            if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+              sudo npm install
+              sudo ionic cordova build android
+            fi

@@ -25,6 +25,6 @@ jobs:
       - deploy:
           command:  |
             if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-              sudo npm install
-              sudo ionic cordova build android
+              npm install
+              ionic cordova build android
             fi

@@ -1,12 +1,12 @@
-version: 2
-  jobs:
-    build:
-      docker:
-        - image: circleci/android:api-28-node
-      working_directory: ~/repo
-      environment:
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12.18.2
+    environment:
         JVM_OPTS: -Xmx3200m
-      steps:
+    steps:
         - checkout
         - run: 
             name: "Install gradle"
@@ -38,9 +38,3 @@ version: 2
         - store_artifacts:
             path: /tmp/apk
             destination: apks
-
-  workflows:
-    version: 2
-    build_and_deploy:
-      jobs:
-        - build
